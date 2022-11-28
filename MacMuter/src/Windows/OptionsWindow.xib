@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="OptionsWindow">
+            <connections>
+                <outlet property="button_run_at_login" destination="nQD-CP-nRR" id="ZCy-YC-pL2"/>
+                <outlet property="enable_hotkey_button" destination="OUT-hv-IPO" id="yKs-C6-SPz"/>
+                <outlet property="github_button" destination="loW-1z-o8t" id="tnz-6r-7w3"/>
+                <outlet property="github_button_cell" destination="b2D-SK-TWf" id="l6i-wa-1Pu"/>
+                <outlet property="hotkey_textfield" destination="Lhg-ja-acE" id="JSw-qs-zk4"/>
+                <outlet property="show_overlay_button" destination="Ahs-4i-nHN" id="fCC-Nw-9hq"/>
+                <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="MicMuter Options" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
+            <rect key="contentRect" x="805" y="414" width="328" height="154"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
+            <view key="contentView" wantsLayer="YES" focusRingType="none" id="se5-gp-TjO">
+                <rect key="frame" x="0.0" y="0.0" width="328" height="154"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                <subviews>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="u1F-2C-8Eq" userLabel="OKButton">
+                        <rect key="frame" x="239" y="13" width="75" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="63" id="gyB-Qr-fE9"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="Done" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ZiA-26-CLg">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="ok_pressed:" target="-2" id="jFn-3D-j1F"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OUT-hv-IPO">
+                        <rect key="frame" x="18" y="115" width="108" height="18"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="104" id="UEp-av-Q9y"/>
+                        </constraints>
+                        <buttonCell key="cell" type="check" title="Enable hotkey" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="P1T-Ae-1jL">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="enable_hotkey_changed:" target="-2" id="OnI-hc-CHj"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nQD-CP-nRR" userLabel="RunAtLoginButton">
+                        <rect key="frame" x="18" y="59" width="94" height="18"/>
+                        <buttonCell key="cell" type="check" title="Run at login" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="DOf-xI-WCk">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="run_after_login_changed:" target="-2" id="Qps-I7-fV0"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ahs-4i-nHN">
+                        <rect key="frame" x="18" y="87" width="103" height="18"/>
+                        <buttonCell key="cell" type="check" title="Show overlay" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="YTk-lB-LNl">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="show_overlay_button_changed:" target="-2" id="VuB-D7-tU7"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="loW-1z-o8t" customClass="LinkButton">
+                        <rect key="frame" x="20" y="20" width="124" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="21" id="5rd-fh-4hu"/>
+                        </constraints>
+                        <buttonCell key="cell" type="bevel" title="MicMuter on Github" bezelStyle="rounded" alignment="left" imageScaling="proportionallyDown" inset="2" id="b2D-SK-TWf">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="github_link_clicked:" target="-2" id="R8R-OM-Eba"/>
+                        </connections>
+                    </button>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lhg-ja-acE" customClass="ClickableTextField">
+                        <rect key="frame" x="133" y="114" width="175" height="21"/>
+                        <textFieldCell key="cell" lineBreakMode="truncatingMiddle" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="center" title="WWWW NumPad Enter" usesSingleLineMode="YES" bezelStyle="round" id="WCp-uo-4Tf">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <outlet property="delegate" destination="-2" id="STo-Y2-l5X"/>
+                        </connections>
+                    </textField>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="OUT-hv-IPO" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="3v3-fI-KxM"/>
+                    <constraint firstItem="loW-1z-o8t" firstAttribute="bottom" secondItem="u1F-2C-8Eq" secondAttribute="bottom" id="4FY-H2-cvZ"/>
+                    <constraint firstItem="Lhg-ja-acE" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="19" id="6hD-cc-uAk"/>
+                    <constraint firstItem="Lhg-ja-acE" firstAttribute="leading" secondItem="OUT-hv-IPO" secondAttribute="trailing" constant="8" symbolic="YES" id="7mF-5d-PF0"/>
+                    <constraint firstItem="OUT-hv-IPO" firstAttribute="leading" secondItem="Ahs-4i-nHN" secondAttribute="leading" id="Ncx-43-ZxP"/>
+                    <constraint firstItem="nQD-CP-nRR" firstAttribute="leading" secondItem="Ahs-4i-nHN" secondAttribute="leading" id="Qd3-Rd-qOu"/>
+                    <constraint firstAttribute="trailing" secondItem="Lhg-ja-acE" secondAttribute="trailing" constant="21" id="RTo-2l-ban"/>
+                    <constraint firstAttribute="bottom" secondItem="loW-1z-o8t" secondAttribute="bottom" constant="20" symbolic="YES" id="Uux-34-Wgd"/>
+                    <constraint firstItem="nQD-CP-nRR" firstAttribute="top" secondItem="Ahs-4i-nHN" secondAttribute="bottom" constant="14" id="X6Q-AG-xgk"/>
+                    <constraint firstAttribute="trailing" secondItem="u1F-2C-8Eq" secondAttribute="trailing" constant="20" symbolic="YES" id="YgM-yu-57r"/>
+                    <constraint firstItem="Ahs-4i-nHN" firstAttribute="top" secondItem="OUT-hv-IPO" secondAttribute="bottom" constant="14" id="Zq5-nl-xif"/>
+                    <constraint firstItem="nQD-CP-nRR" firstAttribute="leading" secondItem="loW-1z-o8t" secondAttribute="leading" id="clT-4p-68V"/>
+                    <constraint firstItem="loW-1z-o8t" firstAttribute="top" secondItem="u1F-2C-8Eq" secondAttribute="top" id="rhs-7h-wQO"/>
+                    <constraint firstItem="OUT-hv-IPO" firstAttribute="baseline" secondItem="Lhg-ja-acE" secondAttribute="baseline" id="uB3-Zc-SKj"/>
+                </constraints>
+            </view>
+            <connections>
+                <outlet property="delegate" destination="-2" id="UXo-Zc-OIA"/>
+            </connections>
+            <point key="canvasLocation" x="-446" y="-25"/>
+        </window>
+    </objects>
+</document>
