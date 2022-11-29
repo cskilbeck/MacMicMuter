@@ -11,19 +11,6 @@ static char const *TAG = "OptionsWindow";
 
 //////////////////////////////////////////////////////////////////////
 
-@implementation ClickableTextField
-
-- (void)mouseDown:(NSEvent *)event
-{
-    [super mouseDown:event];
-    OptionsWindow *w = (OptionsWindow *)[[self window] windowController];
-    [w set_hotkey];
-}
-
-@end
-
-//////////////////////////////////////////////////////////////////////
-
 @implementation LinkButton
 
 - (void)set_link_color
@@ -64,7 +51,7 @@ static char const *TAG = "OptionsWindow";
     [[self enable_hotkey_button] setState:settings.hotkey_enabled ? NSControlStateValueOn : NSControlStateValueOff];
     [[self show_overlay_button] setState:settings.show_overlay ? NSControlStateValueOn : NSControlStateValueOff];
     [self update_hotkey_textfield];
-    [self outline_box].hidden = !settings.hotkey_enabled;
+    [self hotkey_container_box].hidden = !settings.hotkey_enabled;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -97,7 +84,7 @@ static char const *TAG = "OptionsWindow";
         [app enable_hotkey];
     }
     [[self enable_hotkey_button] setState:settings.hotkey_enabled ? NSControlStateValueOn : NSControlStateValueOff];
-    [self outline_box].hidden = !settings.hotkey_enabled;
+    [self hotkey_container_box].hidden = !settings.hotkey_enabled;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -126,49 +113,48 @@ static char const *TAG = "OptionsWindow";
 
 static NSString *get_key_name(uint32 key)
 {
-    if (key == ' ') {
-        return @"␣";
-    }
     if (key > ' ' && key < 127) {
-        char s[2] = {key, 0};
-        return [NSString stringWithCString:s encoding:NSASCIIStringEncoding];
+        unichar uni = (unichar)key;
+        return [NSString stringWithCharacters:&uni length:1];
     }
     if (key >= NSF1FunctionKey && key <= NSF24FunctionKey) {
         return [NSString stringWithFormat:@"F%d", key - NSF1FunctionKey + 1];
     }
     switch (key) {
+    case 0x0020:
+        return @"␣"; // Space
     case 0x0003:
-        return @"Enter";
+        return @"⌅"; // Enter
     case 0x0009:
-        return @"Tab";
+        return @"⇥"; // Tab
     case 0x000d:
-        return @"Return";
+        return @"↩"; // Return
     case 0x001b:
-        return @"Escape";
+        return @"⎋"; // Escape
     case 0x007f:
-        return @"Backspace";
+        return @"⌫"; // Backspace
     case 0xf700:
-        return @"Up";
+        return @"↑"; // Up
     case 0xf701:
-        return @"Down";
+        return @"↓"; // Down
     case 0xf702:
-        return @"Left";
+        return @"←"; // Left
     case 0xf703:
-        return @"Right";
+        return @"→"; // Right
     case 0xf728:
-        return @"Delete";
+        return @"⌦"; // Delete
     case 0xf729:
-        return @"Home";
+        return @"↖"; // Home
     case 0xf72b:
-        return @"End";
+        return @"↘"; // End
     case 0xf72c:
-        return @"Page Up";
+        return @"⇞"; // Page Up
     case 0xf72d:
-        return @"Page Down";
+        return @"⇟"; // Page Down
     case 0xf739:
-        return @"Clear";
+        return @"⌧"; // Clear
     }
-    return [NSString stringWithFormat:@"KEY 0x%04x", key];
+    return [NSString stringWithFormat:@"%04x", key];
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -180,11 +166,13 @@ typedef struct modifier_name {
     uint32 mask;
 } modifier_name_t;
 
-static modifier_name_t modifier_names[NUM_MODIFIERS] = {{"⌃", NSEventModifierFlagShift},
-                                                        {"⇧", NSEventModifierFlagControl},
-                                                        {"⌥", NSEventModifierFlagOption},
-                                                        {"⌘", NSEventModifierFlagCommand},
-                                                        {" NumPad", NSEventModifierFlagNumericPad}};
+static modifier_name_t modifier_names[NUM_MODIFIERS] = {
+    {"⇧", NSEventModifierFlagShift},      // shift
+    {"⌃", NSEventModifierFlagControl},    // control
+    {"⌥", NSEventModifierFlagOption},     // option
+    {"⌘", NSEventModifierFlagCommand},    // command
+    {" 𐄡", NSEventModifierFlagNumericPad} // numpad
+};
 
 //////////////////////////////////////////////////////////////////////
 
@@ -199,8 +187,7 @@ static modifier_name_t modifier_names[NUM_MODIFIERS] = {{"⌃", NSEventModifierF
         }
     }
     NSString *hotkey_name = [NSString stringWithFormat:@"%@ %@", modifiers, get_key_name(settings.hotkey)];
-    [[self outline_box] setFillColor:[NSColor textBackgroundColor]];
-    [[self outline_box] setBorderColor:[NSColor clearColor]];
+    [[self outline_box] setHidden:YES];
     [[[self hotkey_textfield] cell] setTitle:hotkey_name];
 }
 
@@ -216,9 +203,7 @@ static modifier_name_t modifier_names[NUM_MODIFIERS] = {{"⌃", NSEventModifierF
     }
     hotkey_scanning = true;
 
-    [[self outline_box] setBorderType:NSLineBorder];
-    [[self outline_box] setFillColor:[NSColor textBackgroundColor]];
-    [[self outline_box] setBorderColor:[NSColor selectedTextBackgroundColor]];
+    [[self outline_box] setHidden:NO];
     [[[self hotkey_textfield] cell] setTitle:@"Choose hotkey..."];
 
     AppDelegate *app = (AppDelegate *)[[NSApplication sharedApplication] delegate];
@@ -232,6 +217,13 @@ static modifier_name_t modifier_names[NUM_MODIFIERS] = {{"⌃", NSEventModifierF
     LOG(TAG, @"on_deactivate");
     hotkey_scanning = false;
     [self update_hotkey_textfield];
+}
+
+//////////////////////////////////////////////////////////////////////
+
+- (IBAction)set_hotkey_button:(NSButton *)sender
+{
+    [self set_hotkey];
 }
 
 //////////////////////////////////////////////////////////////////////
