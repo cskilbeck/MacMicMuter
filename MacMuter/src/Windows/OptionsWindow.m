@@ -119,7 +119,7 @@ static char const *TAG = "OptionsWindow";
 
 - (IBAction)github_link_clicked:(LinkButton *)sender
 {
-    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://github.com/cskilbeck/MacMuter"]];
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://github.com/cskilbeck/MacMicMuter"]];
 }
 
 //////////////////////////////////////////////////////////////////////
