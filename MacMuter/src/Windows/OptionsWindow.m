@@ -26,6 +26,15 @@ static char const *TAG = "OptionsWindow";
 
 @implementation LinkButton
 
+- (void)set_link_color
+{
+    NSColor *color = [NSColor linkColor];
+    NSMutableAttributedString *t = [[NSMutableAttributedString alloc] initWithAttributedString:[self attributedTitle]];
+    NSRange titleRange = NSMakeRange(0, [t length]);
+    [t addAttribute:NSForegroundColorAttributeName value:color range:titleRange];
+    [self setAttributedTitle:t];
+}
+
 - (void)resetCursorRects
 {
     if (self.cursor) {
@@ -37,14 +46,6 @@ static char const *TAG = "OptionsWindow";
 
 //////////////////////////////////////////////////////////////////////
 
-- (void)set_text_color_with_red:(float)red green:(float)green blue:(float)blue
-{
-    NSColor *color = [NSColor colorWithCalibratedRed:0.1 green:0.5 blue:1 alpha:0.9];
-    NSMutableAttributedString *t = [[NSMutableAttributedString alloc] initWithAttributedString:[self attributedTitle]];
-    NSRange titleRange = NSMakeRange(0, [t length]);
-    [t addAttribute:NSForegroundColorAttributeName value:color range:titleRange];
-    [self setAttributedTitle:t];
-}
 @end
 
 //////////////////////////////////////////////////////////////////////
@@ -63,7 +64,7 @@ static char const *TAG = "OptionsWindow";
     [[self enable_hotkey_button] setState:settings.hotkey_enabled ? NSControlStateValueOn : NSControlStateValueOff];
     [[self show_overlay_button] setState:settings.show_overlay ? NSControlStateValueOn : NSControlStateValueOff];
     [self update_hotkey_textfield];
-    [self hotkey_textfield].hidden = !settings.hotkey_enabled;
+    [self outline_box].hidden = !settings.hotkey_enabled;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -72,7 +73,7 @@ static char const *TAG = "OptionsWindow";
 {
     [super windowDidLoad];
     [[self github_button] setCursor:[NSCursor pointingHandCursor]];
-    [[self github_button] set_text_color_with_red:0.1f green:0.5f blue:0.9f];
+    [[self github_button] set_link_color];
     [self update_controls];
 }
 
@@ -96,7 +97,7 @@ static char const *TAG = "OptionsWindow";
         [app enable_hotkey];
     }
     [[self enable_hotkey_button] setState:settings.hotkey_enabled ? NSControlStateValueOn : NSControlStateValueOff];
-    [self hotkey_textfield].hidden = !settings.hotkey_enabled;
+    [self outline_box].hidden = !settings.hotkey_enabled;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -198,7 +199,8 @@ static modifier_name_t modifier_names[NUM_MODIFIERS] = {{"⌃", NSEventModifierF
         }
     }
     NSString *hotkey_name = [NSString stringWithFormat:@"%@ %@", modifiers, get_key_name(settings.hotkey)];
-    [[self hotkey_textfield] setTextColor:[NSColor labelColor]];
+    [[self outline_box] setFillColor:[NSColor textBackgroundColor]];
+    [[self outline_box] setBorderColor:[NSColor clearColor]];
     [[[self hotkey_textfield] cell] setTitle:hotkey_name];
 }
 
@@ -214,7 +216,9 @@ static modifier_name_t modifier_names[NUM_MODIFIERS] = {{"⌃", NSEventModifierF
     }
     hotkey_scanning = true;
 
-    [[self hotkey_textfield] setTextColor:[NSColor colorWithRed:0.35 green:0.7 blue:0.9 alpha:1.0]];
+    [[self outline_box] setBorderType:NSLineBorder];
+    [[self outline_box] setFillColor:[NSColor textBackgroundColor]];
+    [[self outline_box] setBorderColor:[NSColor selectedTextBackgroundColor]];
     [[[self hotkey_textfield] cell] setTitle:@"Choose hotkey..."];
 
     AppDelegate *app = (AppDelegate *)[[NSApplication sharedApplication] delegate];

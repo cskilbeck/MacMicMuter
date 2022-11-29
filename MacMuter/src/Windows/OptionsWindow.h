@@ -16,9 +16,8 @@
 
 @interface LinkButton : NSButton
 
+- (void)set_link_color;
 - (void)resetCursorRects;
-
-- (void)set_text_color_with_red:(float)red green:(float)green blue:(float)blue;
 
 @property(strong) NSCursor *cursor;
 
@@ -34,6 +33,7 @@
 @property(weak) IBOutlet LinkButton *github_button;
 @property(weak) IBOutlet NSButtonCell *github_button_cell;
 @property(weak) IBOutlet NSButton *show_overlay_button;
+@property (weak) IBOutlet NSBox *outline_box;
 
 - (IBAction)enable_hotkey_changed:(NSButton *)sender;
 - (IBAction)ok_pressed:(id)sender;
