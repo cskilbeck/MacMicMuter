@@ -6,7 +6,7 @@
 #include "image.h"
 #include "settings.h"
 
-static char const *TAG = "OverlayWindow";
+LOG_CONTEXT("OverlayWindow");
 
 //////////////////////////////////////////////////////////////////////
 
@@ -55,7 +55,7 @@ float const show_alpha = 0.95f;
 
 - (OverlayWindow *)init
 {
-    LOG(TAG, @"OverlayWindow init");
+    LOG(@"OverlayWindow init");
     self = [super init];
 
     [self setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces];
@@ -68,7 +68,7 @@ float const show_alpha = 0.95f;
     float const normal_size = 200.0f;
     float const ratio = 1920 / normal_size;
     overlay_size = roundf(max_dim / ratio);
-    LOG(TAG, @"overlay size is %f", overlay_size);
+    LOG(@"overlay size is %f", overlay_size);
     float x = (width - overlay_size) / 2;
     float y = overlay_size * .7f;
     [self setFrame:NSMakeRect(x, y, overlay_size, overlay_size) display:NO];

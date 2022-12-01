@@ -7,7 +7,7 @@
 #include "audio.h"
 #include "image.h"
 
-static char const *TAG = "OptionsWindow";
+LOG_CONTEXT("OptionsWindow");
 
 //////////////////////////////////////////////////////////////////////
 
@@ -77,11 +77,11 @@ static char const *TAG = "OptionsWindow";
 - (IBAction)enable_hotkey_changed:(NSButton *)sender
 {
     settings.hotkey_enabled = [[self enable_hotkey_button] state] == NSControlStateValueOn;
-    LOG(TAG, @"HOTKEY ENABLED: %d", settings.hotkey_enabled);
+    LOG(@"HOTKEY ENABLED: %d", settings.hotkey_enabled);
     if (settings.hotkey_enabled) {
 
         AppDelegate *app = (AppDelegate *)[[NSApplication sharedApplication] delegate];
-        [app enable_hotkey];
+        [app setup_hotkey];
     }
     [[self enable_hotkey_button] setState:settings.hotkey_enabled ? NSControlStateValueOn : NSControlStateValueOff];
     [self hotkey_container_box].hidden = !settings.hotkey_enabled;
@@ -178,7 +178,7 @@ static modifier_name_t modifier_names[NUM_MODIFIERS] = {
 
 - (void)update_hotkey_textfield
 {
-    LOG(TAG, @"update_hotkey_textfield");
+    LOG(@"update_hotkey_textfield");
     NSString *modifiers = @"";
     for (int i = 0; i < NUM_MODIFIERS; ++i) {
         if ((settings.modifiers & modifier_names[i].mask) != 0) {
@@ -195,7 +195,7 @@ static modifier_name_t modifier_names[NUM_MODIFIERS] = {
 
 - (void)set_hotkey
 {
-    LOG(TAG, @"set_hotkey");
+    LOG(@"set_hotkey");
     if (hotkey_scanning) {
         hotkey_scanning = false;
         [self update_hotkey_textfield];
@@ -214,7 +214,7 @@ static modifier_name_t modifier_names[NUM_MODIFIERS] = {
 
 - (void)on_deactivate
 {
-    LOG(TAG, @"on_deactivate");
+    LOG(@"on_deactivate");
     hotkey_scanning = false;
     [self update_hotkey_textfield];
 }

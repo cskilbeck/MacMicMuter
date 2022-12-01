@@ -10,7 +10,7 @@
 
 - (void)audio_changed;
 
-- (void)enable_hotkey;
+- (void)setup_hotkey;
 
 - (void)scan_for_hotkey;
 

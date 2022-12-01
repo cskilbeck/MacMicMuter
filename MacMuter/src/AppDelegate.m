@@ -17,7 +17,7 @@
 #include "image.h"
 #include "mic_status.h"
 
-static char const *TAG = "AppDelegate";
+LOG_CONTEXT("AppDelegate");
 
 CGEventRef __nullable on_hotkey(CGEventTapProxy proxy, CGEventType type, CGEventRef cgevent, void *__nullable userInfo);
 
@@ -54,7 +54,7 @@ NSImage *mic_small_images[mic_num_statuses];
         if ([chars length] == 1) {
             uint32 chr = [chars characterAtIndex:0];
             uint32 modifiers = [event modifierFlags] & NSEventModifierFlagDeviceIndependentFlagsMask;
-            LOG(TAG, @"0x%04x(%08x) (0x%04x(%08x))", chr, modifiers, settings.hotkey, settings.modifiers);
+            LOG(@"0x%04x(%08x) (0x%04x(%08x))", chr, modifiers, settings.hotkey, settings.modifiers);
             if (hotkey_scanning) {
                 hotkey_scanning = false;
                 settings.hotkey = chr;
@@ -63,7 +63,7 @@ NSImage *mic_small_images[mic_num_statuses];
                 return nil;
             } else {
                 if (![event isARepeat] && chr == settings.hotkey && modifiers == settings.modifiers) {
-                    LOG(TAG, @"HOTKEY PRESSED");
+                    LOG(@"HOTKEY PRESSED");
                     muting = true;
                     audio_toggle_mute();
                     return nil;
@@ -140,7 +140,7 @@ NSImage *mic_small_images[mic_num_statuses];
 {
     audio_scan_devices(!muting);
     int new_status = audio_get_mute_status();
-    LOG(TAG, @"NEW MUTE STATUS IS %s", get_mute_status_name(new_status));
+    LOG(@"NEW MUTE STATUS IS %s", get_mute_status_name(new_status));
     if (new_status != previous_mute_status) {
         [self set_status_icon];
         [self show_overlay];
@@ -189,23 +189,27 @@ NSImage *mic_small_images[mic_num_statuses];
 
 //////////////////////////////////////////////////////////////////////
 
-- (void)enable_hotkey
+- (void)setup_hotkey
 {
-    LOG(TAG, @"enable_hotkey");
+    LOG(@"setup_hotkey: enabled = %d", settings.hotkey_enabled);
     if (settings.hotkey_enabled) {
         if (!hotkey_installed) {
-            if ([self check_hotkey_permissions:false]) {
-                LOG(TAG, @"permissions OK");
-                [self install_hotkey];
+            NSDictionary *options_prompt = @{(__bridge id)kAXTrustedCheckOptionPrompt : @YES};
+            if (AXIsProcessTrustedWithOptions((__bridge CFDictionaryRef)options_prompt)) {
+                LOG(@"permissions OK");
+                hotkey_tap = CGEventTapCreate(kCGSessionEventTap, kCGHeadInsertEventTap, kCGEventTapOptionDefault,
+                                              CGEventMaskBit(kCGEventKeyDown), on_hotkey, (__bridge void *)self);
+                hotkey_runloop_source_ref = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, hotkey_tap, 0);
+                CFRunLoopAddSource(CFRunLoopGetMain(), hotkey_runloop_source_ref, kCFRunLoopCommonModes);
+                hotkey_installed = true;
             } else {
-                LOG(TAG, @"still need permissions");
-                [self check_hotkey_permissions:true];
+                LOG(@"still need permissions");
                 settings.hotkey_enabled = false;
                 [self show_options_window];
             }
         }
     } else if (hotkey_installed) {
-        LOG(TAG, @"remove hotkey");
+        LOG(@"remove hotkey");
         CFRunLoopRemoveSource(CFRunLoopGetMain(), hotkey_runloop_source_ref, kCFRunLoopCommonModes);
         hotkey_tap = nil;
         hotkey_runloop_source_ref = nil;
@@ -215,44 +219,22 @@ NSImage *mic_small_images[mic_num_statuses];
 
 //////////////////////////////////////////////////////////////////////
 
-- (bool)check_hotkey_permissions:(bool)prompt
-{
-    NSDictionary *options = @{(__bridge id)kAXTrustedCheckOptionPrompt : prompt ? @YES : @NO};
-    return AXIsProcessTrustedWithOptions((__bridge CFDictionaryRef)options);
-}
-
-//////////////////////////////////////////////////////////////////////
-
-- (void)install_hotkey
-{
-    LOG(TAG, @"install_hotkey");
-    if (!hotkey_installed) {
-        hotkey_tap = CGEventTapCreate(kCGSessionEventTap, kCGHeadInsertEventTap, kCGEventTapOptionDefault,
-                                      CGEventMaskBit(kCGEventKeyDown), on_hotkey, (__bridge void *)self);
-        hotkey_runloop_source_ref = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, hotkey_tap, 0);
-        CFRunLoopAddSource(CFRunLoopGetMain(), hotkey_runloop_source_ref, kCFRunLoopCommonModes);
-        hotkey_installed = true;
-    }
-}
-
-//////////////////////////////////////////////////////////////////////
-
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    LOG(TAG, @"----------------------------------------------------------");
+    LOG(@"----------------------------------------------------------");
 
     NSProcessInfo *pInfo = [NSProcessInfo processInfo];
     NSString *version = [pInfo operatingSystemVersionString];
 
     NSOperatingSystemVersion ver = [NSProcessInfo.processInfo operatingSystemVersion];
 
-    LOG(TAG, @"OS: %@ (%d.%d.%d)", version, ver.majorVersion, ver.minorVersion, ver.patchVersion);
+    LOG(@"OS: %@ (%d.%d.%d)", version, ver.majorVersion, ver.minorVersion, ver.patchVersion);
 
     load_settings();
 
     [NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
 
-    [self enable_hotkey];
+    [self setup_hotkey];
 
     audio_init();
 

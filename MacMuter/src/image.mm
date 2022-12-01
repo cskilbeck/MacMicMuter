@@ -10,7 +10,7 @@
 #include "../../lunasvg/include/lunasvg.h"
 #include "mic_status.h"
 
-static char const *TAG = "image";
+LOG_CONTEXT("image");
 
 #include "Image/microphone_disconnected_svg.h"
 #include "Image/microphone_mute_svg.h"
@@ -45,7 +45,7 @@ char const **microphone_small_svgs[mic_num_statuses] =
 void done_callback(void *info, const void *data, size_t size)
 {
     free((void *)data);
-    LOG(TAG, @"Done!");
+    LOG(@"Done!");
 }
 
 //////////////////////////////////////////////////////////////////////

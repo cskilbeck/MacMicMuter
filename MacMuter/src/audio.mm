@@ -12,7 +12,7 @@
 #include "audio.h"
 #include "mic_status.h"
 
-static char const *TAG = "audio";
+LOG_CONTEXT("audio");
 
 //////////////////////////////////////////////////////////////////////
 
@@ -20,7 +20,7 @@ static char const *TAG = "audio";
     {                                                      \
         OSStatus result = (x);                             \
         if (result != noErr) {                             \
-            LOG(TAG, @ #x " failed: %@", four_cc(result)); \
+            LOG(@ #x " failed: %@", four_cc(result)); \
             return result;                                 \
         }                                                  \
     }
@@ -229,17 +229,17 @@ struct audio_device {
     OSStatus on_change(AudioObjectID inObjectID, uint32 inNumberAddresses,
                        const AudioObjectPropertyAddress *inAddresses)
     {
-        //        LOG(TAG, @"%@:%@", name, four_cc(inAddresses[0].mSelector));
+        //        LOG(@"%@:%@", name, four_cc(inAddresses[0].mSelector));
         //        float vol;
         //        bool mute;
         //        switch (inAddresses[0].mSelector) {
         //        case 'volm':
         //            get_volume(device_id, inAddresses[0].mElement, &vol);
-        //            LOG(TAG, @"New vol: %f", vol);
+        //            LOG(@"New vol: %f", vol);
         //            break;
         //        case 'mute':
         //            get_mute(device_id, &mute);
-        //            LOG(TAG, @"New mute: %d", mute);
+        //            LOG(@"New mute: %d", mute);
         //            break;
         //        }
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -263,17 +263,17 @@ struct audio_device {
 
     OSStatus mute()
     {
-        LOG(TAG, @"Muting %@", name);
+        LOG(@"Muting %@", name);
         if (can_mute) {
-            LOG(TAG, @"  mute");
+            LOG(@"  mute");
             CHK(set_mute(device_id, true));
         }
         if (has_master_volume) {
-            LOG(TAG, @"  master volume -> 0");
+            LOG(@"  master volume -> 0");
             CHK(set_volume(device_id, 0, 0.0f));
         }
         for (int i = 0; i < num_channel_volumes; ++i) {
-            LOG(TAG, @"  volume channel %d -> 0", i + 1);
+            LOG(@"  volume channel %d -> 0", i + 1);
             CHK(set_volume(device_id, i + 1, 0.0f));
         }
         return noErr;
@@ -283,17 +283,17 @@ struct audio_device {
 
     OSStatus unmute()
     {
-        LOG(TAG, @"Unmuting %@", name);
+        LOG(@"Unmuting %@", name);
         if (can_mute) {
-            LOG(TAG, @"  unmute");
+            LOG(@"  unmute");
             CHK(set_mute(device_id, false));
         }
         if (has_master_volume) {
-            LOG(TAG, @"  master volume -> %f", original_master_volume);
+            LOG(@"  master volume -> %f", original_master_volume);
             CHK(set_volume(device_id, 0, original_master_volume));
         }
         for (int i = 0; i < num_channel_volumes; ++i) {
-            LOG(TAG, @"  channel %d volume -> %f", i + 1, original_channel_volumes[i]);
+            LOG(@"  channel %d volume -> %f", i + 1, original_channel_volumes[i]);
             CHK(set_volume(device_id, i + 1, original_channel_volumes[i]));
         }
         return noErr;
@@ -318,7 +318,7 @@ struct audio_device {
 
         device_uid = uid;
 
-        LOG(TAG, @"INIT %@ (%@)", name, device_uid);
+        LOG(@"INIT %@ (%@)", name, device_uid);
 
         // ***** is there a mute control? *****
 
@@ -336,7 +336,7 @@ struct audio_device {
             can_mute = can_mute_be_set;
 
             if (can_mute) {
-                LOG(TAG, @"  Has mute control");
+                LOG(@"  Has mute control");
             }
         }
 
@@ -358,7 +358,7 @@ struct audio_device {
             if (can_vol_be_set) {
 
                 has_master_volume = true;
-                LOG(TAG, @"  Has master volume");
+                LOG(@"  Has master volume");
             }
         }
 
@@ -373,7 +373,7 @@ struct audio_device {
         OSStatus result = AudioObjectGetPropertyDataSize(device_id, &chan_addr, 0, NULL, &channels_size);
 
         if (result != kAudioHardwareNoError) {
-            LOG(TAG, @"Error getting preferred channel layout: %@", four_cc(result));
+            LOG(@"Error getting preferred channel layout: %@", four_cc(result));
         } else {
 
             std::vector<Byte> buffer(channels_size);
@@ -381,7 +381,7 @@ struct audio_device {
 
             CHK(AudioObjectGetPropertyData(device_id, &chan_addr, 0, NULL, &channels_size, layout));
 
-            LOG(TAG, @"  Has %d channel(s)", layout->mNumberChannelDescriptions);
+            LOG(@"  Has %d channel(s)", layout->mNumberChannelDescriptions);
 
             num_channel_volumes = 0;
             original_channel_volumes.resize(layout->mNumberChannelDescriptions);
@@ -402,7 +402,7 @@ struct audio_device {
 
                         num_channel_volumes = i + 1;
 
-                        LOG(TAG, @"    Channel %d has volume control", i + 1);
+                        LOG(@"    Channel %d has volume control", i + 1);
                     }
                 }
             }
@@ -472,25 +472,25 @@ struct audio_device {
 
     void debug_dump()
     {
-        LOG(TAG, @"----------------------------------------");
-        LOG(TAG, @"DEVICE %@ (%@)", name, device_uid);
-        LOG(TAG, @"Can mute: %d", can_mute);
-        LOG(TAG, @"Has master volume: %d", has_master_volume);
-        LOG(TAG, @"# channels: %d", num_channel_volumes);
+        LOG(@"----------------------------------------");
+        LOG(@"DEVICE %@ (%@)", name, device_uid);
+        LOG(@"Can mute: %d", can_mute);
+        LOG(@"Has master volume: %d", has_master_volume);
+        LOG(@"# channels: %d", num_channel_volumes);
         if (can_mute) {
             bool muted;
             get_mute(device_id, &muted);
-            LOG(TAG, @"Current mute status: %d", muted);
+            LOG(@"Current mute status: %d", muted);
         }
         if (has_master_volume) {
             float master_vol;
             get_volume(device_id, 0, &master_vol);
-            LOG(TAG, @"Current master volume: %f", master_vol);
+            LOG(@"Current master volume: %f", master_vol);
         }
         for (int i = 0; i < num_channel_volumes; ++i) {
             float vol;
             get_volume(device_id, i + 1, &vol);
-            LOG(TAG, @"Channel %d volume: %f", i, vol);
+            LOG(@"Channel %d volume: %f", i, vol);
         }
     }
 };
@@ -504,7 +504,7 @@ std::map<uint32, audio_device *> audio_devices;
 static OSStatus device_listener(AudioObjectID inObjectID, uint32 inNumberAddresses,
                                 const AudioObjectPropertyAddress *inAddresses, void *__nullable inClientData)
 {
-    LOG(TAG, @"DEVICE LIST CHANGED! (%d notifications)", inNumberAddresses);
+    LOG(@"DEVICE LIST CHANGED! (%d notifications)", inNumberAddresses);
     dispatch_async(dispatch_get_main_queue(), ^{
       AppDelegate *d = (AppDelegate *)[[NSApplication sharedApplication] delegate];
       [d audio_changed];
@@ -532,7 +532,7 @@ bool audio_is_muted()
 
 OSStatus audio_init()
 {
-    LOG(TAG, @"audio_init");
+    LOG(@"audio_init");
 
     audio_cleanup();
 
@@ -595,16 +595,16 @@ OSStatus audio_scan_devices(bool scan_volumes)
                 if (device->init(device_id) == noErr) {
                     audio_devices[device_id] = device;
                     device->snapshot_volume();
-                    LOG(TAG, @"  Is new device");
+                    LOG(@"  Is new device");
                 } else {
-                    LOG(TAG, @"  ERROR SCANNING DEVICE %d", device_id);
+                    LOG(@"  ERROR SCANNING DEVICE %d", device_id);
                     delete device;
                     device = nullptr;
                 }
             } else {
 
                 device = audio_devices[device_id];
-                LOG(TAG, @"%@ is still plugged in", device->name);
+                LOG(@"%@ is still plugged in", device->name);
                 device->device_is_present = true;
                 if (scan_volumes) {
                     device->snapshot_volume();
@@ -617,7 +617,7 @@ OSStatus audio_scan_devices(bool scan_volumes)
 
     for (auto it = begin(audio_devices); it != end(audio_devices);) {
         if (!it->second->device_is_present) {
-            LOG(TAG, @"DEVICE %@ removed (ID was %d)", it->second->name, it->first);
+            LOG(@"DEVICE %@ removed (ID was %d)", it->second->name, it->first);
             it = audio_devices.erase(it);
         } else {
             ++it;
@@ -659,7 +659,7 @@ void audio_toggle_mute()
 {
     bool all_muted = audio_is_muted();
 
-    LOG(TAG, @"Before toggle, all muted = %d", all_muted);
+    LOG(@"Before toggle, all muted = %d", all_muted);
 
     for (auto &kv : audio_devices) {
         audio_device *d = kv.second;
@@ -675,7 +675,7 @@ void audio_toggle_mute()
 
 void audio_debug_dump()
 {
-    LOG(TAG, @"AUDIO DEBUG DUMP");
+    LOG(@"AUDIO DEBUG DUMP");
 
     for (auto &kv : audio_devices) {
         kv.second->debug_dump();

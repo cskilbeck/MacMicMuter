@@ -42,13 +42,13 @@
 		AAB7FAEE2920F9EB007BDEA1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AAB7FAF32920F9EB007BDEA1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AAB7FAF42920F9EB007BDEA1 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		AAB7FAF62920F9EB007BDEA1 /* micmuter.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = micmuter.entitlements; sourceTree = "<group>"; };
 		AABBCC8F2928F5D200727F6E /* settings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = settings.h; sourceTree = "<group>"; };
 		AABBCC902928FA4100727F6E /* settings.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = settings.mm; sourceTree = "<group>"; };
 		AAE14C3E293043FE0002705F /* microphone_disconnected_small_svg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = microphone_disconnected_small_svg.h; path = Image/microphone_disconnected_small_svg.h; sourceTree = "<group>"; };
 		AAE14C3F293043FE0002705F /* microphone_mute_small_svg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = microphone_mute_small_svg.h; path = Image/microphone_mute_small_svg.h; sourceTree = "<group>"; };
 		AAE14C40293043FE0002705F /* microphone_normal_small_svg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = microphone_normal_small_svg.h; path = Image/microphone_normal_small_svg.h; sourceTree = "<group>"; };
 		CB986DEF2934FA4600504427 /* liblunasvg.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; name = liblunasvg.a; path = ../lunasvg/build/Debug/liblunasvg.a; sourceTree = SOURCE_ROOT; };
+		CBD85CBB293A05AE006EDB01 /* micmuter.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = micmuter.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,9 +66,9 @@
 		AA99BBB7292AD9FE006CD25E /* Project */ = {
 			isa = PBXGroup;
 			children = (
+				CBD85CBB293A05AE006EDB01 /* micmuter.entitlements */,
 				AAB7FAEE2920F9EB007BDEA1 /* Assets.xcassets */,
 				AAB7FAF32920F9EB007BDEA1 /* Info.plist */,
-				AAB7FAF62920F9EB007BDEA1 /* micmuter.entitlements */,
 			);
 			path = Project;
 			sourceTree = "<group>";
@@ -176,7 +176,7 @@
 				TargetAttributes = {
 					AAB7FAE72920F9EB007BDEA1 = {
 						CreatedOnToolsVersion = 9.2;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -261,7 +261,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -286,7 +286,7 @@
 				NEW_SETTING = "";
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
-				SYMROOT = "$(OBJROOT)";
+				SYMROOT = "$(PROJECT_DIR)/Build";
 			};
 			name = Debug;
 		};
@@ -322,7 +322,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -341,7 +341,7 @@
 				NEW_SETTING = "";
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
-				SYMROOT = "$(OBJROOT)";
+				SYMROOT = "$(PROJECT_DIR)/Build";
 			};
 			name = Release;
 		};
@@ -349,19 +349,23 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Project/micmuter.entitlements;
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/Project/micmuter.entitlements";
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 6395H7R8WV;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Project/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/../lunasvg/build/Debug",
-					"$(PROJECT_DIR)/src",
+					"$(PROJECT_DIR)/../lunasvg/build/$(CONFIGURATION)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = tinylittlethings.micmuter;
+				OBJROOT = "$(SYMROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.tinylittlethings.micmuter;
 				PRODUCT_NAME = "${TARGET_NAME}";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SYMROOT = "$(PROJECT_DIR)/Build/$(CONFIGURATION)";
 			};
 			name = Debug;
 		};
@@ -369,19 +373,23 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Project/micmuter.entitlements;
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/Project/micmuter.entitlements";
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 6395H7R8WV;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Project/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/src",
-					"$(PROJECT_DIR)/../lunasvg/build/Release",
+					"$(PROJECT_DIR)/../lunasvg/build/$(CONFIGURATION)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = tinylittlethings.micmuter;
+				OBJROOT = "$(SYMROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.tinylittlethings.micmuter;
 				PRODUCT_NAME = "${TARGET_NAME}";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SYMROOT = "$(PROJECT_DIR)/Build/$(CONFIGURATION)";
 			};
 			name = Release;
 		};

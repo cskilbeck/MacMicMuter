@@ -8,7 +8,7 @@
 #include "mic_status.h"
 #include "settings.h"
 
-static char const *TAG = "settings";
+LOG_CONTEXT("settings");
 
 //////////////////////////////////////////////////////////////////////
 
@@ -18,12 +18,12 @@ settings_t settings;
 
 void save_settings(void)
 {
-    LOG(TAG, @"SAVE SETTINGS");
+    LOG(@"SAVE SETTINGS");
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
 #define SAVE(type, val)                              \
     [defaults set##type:settings.val forKey:@ #val]; \
-    LOG(TAG, @"Saved " #val);
+    LOG(@"Saved " #val);
 
     SAVE(Bool, hotkey_enabled);
     SAVE(Bool, show_overlay);
@@ -36,7 +36,7 @@ void save_settings(void)
 
 void load_settings(void)
 {
-    LOG(TAG, @"LOAD SETTINGS");
+    LOG(@"LOAD SETTINGS");
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSArray<NSString *> *keys = [[defaults dictionaryRepresentation] allKeys];
 
@@ -49,7 +49,7 @@ void load_settings(void)
 #define LOAD(type, val)                                                        \
     if ([keys containsObject:@ #val]) {                                        \
         settings.val = (decltype(settings.val))[defaults type##ForKey:@ #val]; \
-        LOG(TAG, @"Loaded " #val);                                             \
+        LOG(@"Loaded " #val);                                             \
     }
 
     LOAD(bool, hotkey_enabled);

@@ -13,7 +13,7 @@ NSString *log_format = [[NSString alloc] initWithUTF8String:"%16s %@\n"];
 
 //////////////////////////////////////////////////////////////////////
 
-extern "C" void LOG(char const *tag, NSString *format, ...)
+extern "C" void emit_log_message(char const *tag, NSString *format, ...)
 {
     va_list args;
     va_start(args, format);

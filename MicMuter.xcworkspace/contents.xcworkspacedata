@@ -2,9 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:lunasvg/build/lunasvg.xcodeproj">
+      location = "group:lunasvg/lunasvg.xcodeproj">
    </FileRef>
    <FileRef
-      location = "container:MacMuter/MicMuter.xcodeproj">
+      location = "group:MacMuter/MicMuter.xcodeproj">
    </FileRef>
 </Workspace>
